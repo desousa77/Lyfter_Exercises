@@ -1,0 +1,13 @@
+list_of_keys =['access_level', 'age']
+
+employee ={
+    'name': 'Alvaro',
+    'email': 'desousa@puravida.com',
+    'access_level': 5,
+    'age': 41
+}
+
+for index in range(len(list_of_keys)):
+    employee.pop(list_of_keys[index])
+
+print(employee)

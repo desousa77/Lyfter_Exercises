@@ -1,0 +1,109 @@
+[
+    {
+        "name": "Pikachu",
+        "type": "Electric",
+        "level": 54,
+        "weight_kg": 6.0,
+        "is_shiny": false,
+        "held_item": null,
+        "skills": [
+            "Thunder Shock",
+            "Quick Attack",
+            "Thunderbolt",
+            "Volt Tackle"
+        ],
+        "stats": {
+            "hp": 35,
+            "attack": 55,
+            "defense": 40,
+            "sp_attack": 50,
+            "sp_defense": 50,
+            "speed": 90
+        }
+    },
+    {
+        "name": "Charmander",
+        "type": "Fire",
+        "level": 8,
+        "weight_kg": 8.5,
+        "is_shiny": true,
+        "held_item": "Charcoal",
+        "skills": [
+            "Ember",
+            "Scratch",
+            "Tackle",
+            "Smokescreen"
+        ],
+        "stats": {
+            "hp": 39,
+            "attack": 52,
+            "defense": 43,
+            "sp_attack": 60,
+            "sp_defense": 50,
+            "speed": 65
+        }
+    },
+    {
+        "name": "alvaro",
+        "type": "Electric",
+        "level": 5,
+        "weight_kg": 85.0,
+        "is_shiny": "True",
+        "held_item": "5",
+        "skills": [
+            "fuerte",
+            " inteligente",
+            " guerrero"
+        ],
+        "stats": {
+            "hp": 5,
+            "attack": 6,
+            "defense": 7,
+            "sp_attack": 7,
+            "sp_defense": 6,
+            "speed": 5
+        }
+    },
+    {
+        "name": "luis",
+        "type": "Fire",
+        "level": 9,
+        "weight_kg": 65.0,
+        "is_shiny": "True",
+        "held_item": "6",
+        "skills": [
+            "speed",
+            " strong",
+            " smart"
+        ],
+        "stats": {
+            "hp": 9,
+            "attack": 10,
+            "defense": 8,
+            "sp_attack": 10,
+            "sp_defense": 10,
+            "speed": 9
+        }
+    },
+    {
+        "name": "julymar",
+        "type": "Fire",
+        "level": 7,
+        "weight_kg": 45.0,
+        "is_shiny": "True",
+        "held_item": "2",
+        "skills": [
+            "estratega",
+            " inteligente",
+            " reserveda"
+        ],
+        "stats": {
+            "hp": 4,
+            "attack": 5,
+            "defense": 6,
+            "sp_attack": 8,
+            "sp_defense": 9,
+            "speed": 5
+        }
+    }
+]
