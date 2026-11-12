@@ -1,0 +1,38 @@
+HISTORIAL DE CAMBIOS
+Repositorio: Lyfter_Exercises
+
+1. Commit: ed6e1ba
+   Message: Past_Exercises
+
+   Qué cambió:
+   Se agregaron 72 archivos correspondientes a los módulos IT Essentials, Programming Logic y Python Basic.
+
+   Por qué se hizo:
+   Para organizar y almacenar los ejercicios desarrollados durante la capacitación de Lyfter.
+
+2. Commit: 1dd5922
+   Message: Initial commit
+
+   Qué cambió:
+   Se creó el archivo README.md.
+
+   Por qué se hizo:
+   Para establecer la descripción inicial del repositorio.
+
+3. Commit: 6ed8d61
+   Message: Merge remote-tracking branch
+
+   Qué cambió:
+   Se integraron los cambios de la rama remota y se incorporó el README.md a la rama local.
+
+   Por qué se hizo:
+   Para sincronizar el repositorio local con GitHub.
+
+4. Commit: 27f7d27
+   Message: Update exercises and documentation
+
+   Qué cambió:
+   Se agregaron ocho diagramas de flujo y se reorganizaron siete archivos PDF de pseudocódigo del módulo Programming Logic.
+
+   Por qué se hizo:
+   Para mejorar la organización de los ejercicios y separar los diagramas de flujo de los documentos de pseudocódigo.
