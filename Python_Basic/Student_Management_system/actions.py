@@ -5,6 +5,7 @@ YELLOW = "\033[93m"
 RED = "\033[91m"
 import csv
 import re
+from data import read_data_students_CSV, write_students_csv
 
 def validate_grade(subject):
     while True:
@@ -33,8 +34,7 @@ def is_valid_section():
             print(f"{RED} Invalid section format. Example: 11A")
             continue
         return section
-
-
+    
 def get_data_new_student():
     print()
     print(f"{CYAN}{BOLD}Please Enter The Following Student Information.")
@@ -51,24 +51,21 @@ def get_data_new_student():
         "spanish_grade": spanish_grade,
         "english_grade": english_grade,
         "social_s_grade": social_s_grade,
-        "Science_grade": science_grade
+        "science_grade": science_grade
     }
     return student_data
 
 def student_exists(file_path, data_student):
-    try:
-        with open(file_path, 'r', encoding='utf-8', newline='') as file_csv:
-            reader = csv.DictReader(file_csv)
-
-            for student in reader:
-                if(
-                    student["full_name"].strip() == data_student["full_name"].strip()
-                    and
-                    student["section"].strip() == data_student["section"].strip()
-                ):
-                    return True
-    except FileNotFoundError:
-        return False            
+    students = read_data_students_CSV(file_path)
+    
+    for student in students:
+        if(
+        student["full_name"].strip() == data_student["full_name"].strip()
+        and
+        student["section"].strip() == data_student["section"].strip()
+        ):
+            return True
+    
     return False
 
 def save_student_to_csv(file_path, data_student):
@@ -117,7 +114,7 @@ def confirm_student_deletion():
     print()
     while True:
         if student_exists:
-            answer = input(f"{YELLOW}Are you sure you want to delete this student?: ").lower()
+            answer = input(f"{RED}Are you sure you want to DELETE this student? (y/n): ").lower()
             if answer == 'y':
                 return True
             elif answer == 'n':
@@ -125,17 +122,77 @@ def confirm_student_deletion():
             else:
                 print(f"{RED}Invalid option. Please enter 'y' or 'n'")
 
-def main():
-    file_input = 'Data_Students.csv'
-    while True:
-        student_data = get_data_new_student()
-        save_student_to_csv(file_input, student_data)
+def remove_student_from_list(students, data_student):
+    new_students = []
 
-        if not ask_for_another_student():
-            print()
-            print(f"{GREEN}Student registration completed.")
-            print()
-            break
+    for student in students:
+        if not (
+            student["full_name"].strip() == data_student["full_name"].strip()
+            and
+            student["section"].strip() == data_student["section"].strip()
+        ):    
+            new_students.append(student)
+    return new_students
 
-if __name__ == '__main__':
-    main()            
+def delete_student(file_path):
+    data_student = get_student_to_delete()
+    students = read_data_students_CSV(file_path)
+
+    if student_exists(file_path, data_student):
+        if confirm_student_deletion():
+            students = remove_student_from_list(students, data_student)
+            write_students_csv(file_path, students)
+        else:
+            print()
+            print(f"{YELLOW}Student deletion cancelled.")    
+    else:
+        print()
+        print(f"{YELLOW}Student not found.")
+
+def show_all_students(file_path):
+    data_students = read_data_students_CSV(file_path)
+    print()
+    print(f"{CYAN}{BOLD}Student General Report\n")
+    for students in data_students:
+        print(f"{GREEN}\tStudent Name: {YELLOW}{students['full_name']}")
+        print(f"{GREEN}\tStudent Section: {YELLOW}{students['section']}")
+        print(f"{GREEN}\tSpanish Grade: {YELLOW}{students['spanish_grade']}")
+        print(f"{GREEN}\tEnglish Grade: {YELLOW}{students['english_grade']}")
+        print(f"{GREEN}\tSocial Studies Grade: {YELLOW}{students['social_s_grade']}")
+        print(f"{GREEN}\tScience Grande: {YELLOW}{students['science_grade']}")
+        print(f"{CYAN}---------------------------------------------------------------------------")
+
+def get_top_three_students(file_path):
+    data_students = read_data_students_CSV(file_path)
+    student_by_avg =[] 
+    for students in data_students:
+        name = students['full_name']
+        section = students['section']
+        avg = (
+            float(students['spanish_grade']) + 
+            float(students['english_grade']) + 
+            float(students['social_s_grade']) + 
+            float(students['science_grade']) 
+        ) / 4
+        
+        student_by_avg.append({
+            "full_name": name,
+            "section": section,
+            "average": avg
+        })
+    student_by_avg.sort(
+        key=lambda student: student['average'],
+        reverse=True
+    )
+    top_three = student_by_avg[:3]
+    return top_three
+
+def show_top_three_students(top_list):
+    print()
+    print(f"{CYAN}{BOLD}\tTop 3 Students - Highest Average Grades.!!!\n")
+    for top_students in top_list:
+        print(f"{GREEN}Student Name: {YELLOW}{top_students['full_name']}")
+        print(f"{GREEN}Student Section: {YELLOW}{top_students['section']}")
+        print(f"{GREEN}Student Average: {YELLOW}{top_students['average']}\n")
+        print(f"{CYAN}---------------------------------------------------------------------------")
+
