@@ -163,28 +163,13 @@ def show_all_students(file_path):
         print(f"{CYAN}---------------------------------------------------------------------------")
 
 def get_top_three_students(file_path):
-    data_students = read_data_students_CSV(file_path)
-    student_by_avg =[] 
-    for students in data_students:
-        name = students['full_name']
-        section = students['section']
-        avg = (
-            float(students['spanish_grade']) + 
-            float(students['english_grade']) + 
-            float(students['social_s_grade']) + 
-            float(students['science_grade']) 
-        ) / 4
-        
-        student_by_avg.append({
-            "full_name": name,
-            "section": section,
-            "average": avg
-        })
-    student_by_avg.sort(
+    student_avg = calculate_student_average(file_path)
+    
+    student_avg.sort(
         key=lambda student: student['average'],
         reverse=True
     )
-    top_three = student_by_avg[:3]
+    top_three = student_avg[:3]
     return top_three
 
 def show_top_three_students(top_list):
@@ -195,4 +180,75 @@ def show_top_three_students(top_list):
         print(f"{GREEN}Student Section: {YELLOW}{top_students['section']}")
         print(f"{GREEN}Student Average: {YELLOW}{top_students['average']}\n")
         print(f"{CYAN}---------------------------------------------------------------------------")
+
+def calculate_student_average(file_path):
+    data_students = read_data_students_CSV(file_path)
+    student_by_avg =[] 
+    for student in data_students:
+        name = student['full_name']
+        section = student['section']
+        avg = (
+            float(student['spanish_grade']) + 
+            float(student['english_grade']) + 
+            float(student['social_s_grade']) + 
+            float(student['science_grade']) 
+        ) / 4
+        student_by_avg.append({
+            "full_name": name,
+            "section": section,
+            "average": avg
+        })
+    student_by_avg.sort(
+        key=lambda student: student['average'],
+        reverse=True
+    )
+    return student_by_avg
+
+def show_students_average(students_list):
+    print()
+    print(f"{CYAN}{BOLD}\t Students Ranked by Average Grade.!!!\n")
+    for students in students_list:
+        print(f"{GREEN}Student Name: {YELLOW}{students['full_name']}")
+        print(f"{GREEN}Student Section: {YELLOW}{students['section']}")
+        print(f"{GREEN}Student Average: {YELLOW}{students['average']}\n")
+        print(f"{CYAN}---------------------------------------------------------------------------")    
+
+def get_failing_students(file_path):
+    students = read_data_students_CSV(file_path)
+    students_failing = []
+    for student in students:
+        name = student['full_name']
+        section = student['section']
+        grades = [
+            float(student['spanish_grade']),
+            float(student['english_grade']),
+            float(student['social_s_grade']),
+            float(student['science_grade'])
+        ]
+        if any(grade < 60 for grade in grades):
+            students_failing.append({
+                "full_name": name,
+                "section": section,
+                "spanish_grade": grades[0],
+                "english_grade": grades[1],
+                "social_s_grade": grades[2],
+                "science_grade": grades[3],
+                "status": "Failing"
+
+            })
+    return students_failing
+
+def show_failing_students(failing_data):
+    print()
+    print(f"{CYAN}{BOLD}\t Students With Failing Grades.!!!\n")
+    for student in failing_data:
+        print(f"{GREEN}Student Name: {YELLOW}{student['full_name']}")
+        print(f"{GREEN}Student Section: {YELLOW}{student['section']}")
+        print(f"{GREEN}Student Spanish Grade: {YELLOW}{student['spanish_grade']}")
+        print(f"{GREEN}Student English Grade: {YELLOW}{student['english_grade']}")
+        print(f"{GREEN}Student Social Studios Grade: {YELLOW}{student['social_s_grade']}")
+        print(f"{GREEN}Student Science Grade: {YELLOW}{student['science_grade']}")
+        print(f"{GREEN}Student Status: {RED}{student['status']}\n")
+        print(f"{CYAN}---------------------------------------------------------------------------")    
+
 
