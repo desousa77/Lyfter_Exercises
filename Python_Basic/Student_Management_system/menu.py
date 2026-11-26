@@ -1,7 +1,7 @@
 import time
-from actions import get_data_new_student, save_student_to_csv, ask_for_another_student, show_all_students, get_top_three_students
-from actions import show_top_three_students, calculate_student_average, show_students_average, get_failing_students, show_failing_students
-from actions import delete_student
+from actions import get_data_new_student, save_student,  ask_for_another_student, show_all_students, get_top_three_students
+from actions import show_top_three_students, calculate_student_average, get_failing_students, show_failing_students
+from actions import delete_student, calculate_group_avg, show_group_average
 from data import get_student_file_path, get_file_name_to_export_import, read_data_students_CSV, write_students_csv, import_file_csv
 
 
@@ -10,8 +10,7 @@ BOLD = "\033[1m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RED = "\033[91m"
-
-file_input = get_student_file_path()
+students=[]
 
 def display_title():
     title = "***** STUDENT MANAGEMENT SYSTEM. *****"
@@ -26,7 +25,7 @@ def menu():
     print(f"\t{GREEN}| 1. Register New Student            |")
     print(f"\t{GREEN}| 2. Student Report                  |")
     print(f"\t{GREEN}| 3. Top 3 Student By Average Grades |") 
-    print(f"\t{GREEN}| 4. View Student Grades             |")
+    print(f"\t{GREEN}| 4. Group Average Grades            |")
     print(f"\t{GREEN}| 5. View Failing Students           |")
     print(f"\t{YELLOW}| 6. DELETE Student                  |")
     print(f"\t{YELLOW}| 7. Export Data To CSV file         |")
@@ -47,48 +46,55 @@ def is_valid_menu_option(option):
     if option not in menu_list:
         print(f"{RED}Invalid option. Please select a number between 1 and 9.")
         return False
-    #print(f"Correct option: {option}")    
     return True
 
 def execute_menu_option(option):
     if option == 1:   
-        student_data = get_data_new_student()
-        save_student_to_csv(file_input, student_data)
-        if not ask_for_another_student():
-            print()
-            print(f"{GREEN}Student registration completed.")
-            print()
-            return True
+        while True:
+            student_data = get_data_new_student()
+            save_student(student_data, students)
+            if not ask_for_another_student():
+                print()
+                print(f"{GREEN}Student registration completed.")
+                print()
+                return True
     if option == 2:
-        show_all_students(file_input)
+        show_all_students(students)
         return True
     if option == 3:
-        top_three = get_top_three_students(file_input)
+        top_three = get_top_three_students(students)
         show_top_three_students(top_three)
         return True
     if option == 4:
-        students_avg = calculate_student_average(file_input)
-        show_students_average(students_avg)
+        students_avg = calculate_student_average(students)
+        group_avg = calculate_group_avg(students_avg)
+        show_group_average(group_avg)
         return True
     if option == 5:
-        failing_students = get_failing_students(file_input)
+        failing_students = get_failing_students(students)
         show_failing_students(failing_students)
         return True
     if option == 6:
-        delete_student(file_input)
-        print()
-        print(f"{YELLOW}Student information deleted successfully.")    
+        delete_student(students)    
         return True
     if option == 7:
-        data_export = read_data_students_CSV(file_input)
-        export_file_path = get_file_name_to_export_import()
-        write_students_csv(export_file_path, data_export)
+        
+        if not students:
+            print()
+            print(f"{YELLOW}No students available in memory. Cannot export data.")
+            return True
+        
+        export_file_path = get_student_file_path()
+        write_students_csv(export_file_path, students)
         print()
         print(f"{YELLOW}The data was successfully exported! The file {export_file_path} has been created.")
         return True
+    
     if option == 8:
-        import_file_path = get_file_name_to_export_import()
-        import_file_csv(file_input, import_file_path)
+        print()
+        print(f"{YELLOW}Please enter the following information to import your data from a CSV file")
+        import_file_path = get_student_file_path()
+        import_file_csv(students, import_file_path)
         return True
 
     

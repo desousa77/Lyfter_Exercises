@@ -55,8 +55,7 @@ def get_data_new_student():
     }
     return student_data
 
-def student_exists(file_path, data_student):
-    students = read_data_students_CSV(file_path)
+def student_exists(data_student, students):
     
     for student in students:
         if(
@@ -68,25 +67,17 @@ def student_exists(file_path, data_student):
     
     return False
 
-def save_student_to_csv(file_path, data_student):
-    
-    if student_exists(file_path, data_student):
+def save_student(student_data, students):
+    if student_exists(student_data, students):
         print()
-        print(f"{RED}Student | {data_student["full_name"]}, section: {data_student["section"]} | already exists.")
+        print(f"{RED}This student already exists.")
         return False
     
-    with open(file_path, 'a', encoding='utf-8', newline='') as file_csv:
-        headers = data_student.keys()
-        write = csv.DictWriter(file_csv, fieldnames=headers)
-        
-        if file_csv.tell() == 0:
-            write.writeheader()
-        
-        write.writerow(data_student)
-        
-        print()
-        print(f"{YELLOW}The student information was saved successfully.")
-        print()
+    students.append(student_data)    
+    print()
+    print(f"{YELLOW}The student information was saved successfully.")
+    print()
+    return True
         
 def ask_for_another_student():
     while True:
@@ -123,25 +114,32 @@ def confirm_student_deletion():
                 print(f"{RED}Invalid option. Please enter 'y' or 'n'")
 
 def remove_student_from_list(students, data_student):
-    new_students = []
-
+    
     for student in students:
-        if not (
+        if (
             student["full_name"].strip() == data_student["full_name"].strip()
             and
             student["section"].strip() == data_student["section"].strip()
         ):    
-            new_students.append(student)
-    return new_students
+            students.remove(student)
+            return True        
+def show_no_data_message(students):
+    if not students:
+        print()
+        print(f"{YELLOW}No student data available in memory. Please add or import students first.")
+        return False
+    return True
 
-def delete_student(file_path):
+def delete_student(students):
+    if not show_no_data_message(students):
+        return
+    
     data_student = get_student_to_delete()
-    students = read_data_students_CSV(file_path)
-
-    if student_exists(file_path, data_student):
+    
+    if student_exists(data_student, students):
         if confirm_student_deletion():
-            students = remove_student_from_list(students, data_student)
-            write_students_csv(file_path, students)
+            remove_student_from_list(students, data_student)
+            print(f"{YELLOW}Student successfully deleted.")
         else:
             print()
             print(f"{YELLOW}Student deletion cancelled.")    
@@ -149,42 +147,40 @@ def delete_student(file_path):
         print()
         print(f"{YELLOW}Student not found.")
 
-def show_all_students(file_path):
-    data_students = read_data_students_CSV(file_path)
+def show_all_students(students):
+    if not show_no_data_message(students):
+        return
+    
     print()
     print(f"{CYAN}{BOLD}Student General Report\n")
-    for students in data_students:
-        print(f"{GREEN}\tStudent Name: {YELLOW}{students['full_name']}")
-        print(f"{GREEN}\tStudent Section: {YELLOW}{students['section']}")
-        print(f"{GREEN}\tSpanish Grade: {YELLOW}{students['spanish_grade']}")
-        print(f"{GREEN}\tEnglish Grade: {YELLOW}{students['english_grade']}")
-        print(f"{GREEN}\tSocial Studies Grade: {YELLOW}{students['social_s_grade']}")
-        print(f"{GREEN}\tScience Grande: {YELLOW}{students['science_grade']}")
+    for student_data in students:
+        print(f"{GREEN}\tStudent Name: {YELLOW}{student_data['full_name']}")
+        print(f"{GREEN}\tStudent Section: {YELLOW}{student_data['section']}")
+        print(f"{GREEN}\tSpanish Grade: {YELLOW}{student_data['spanish_grade']}")
+        print(f"{GREEN}\tEnglish Grade: {YELLOW}{student_data['english_grade']}")
+        print(f"{GREEN}\tSocial Studies Grade: {YELLOW}{student_data['social_s_grade']}")
+        print(f"{GREEN}\tScience Grade: {YELLOW}{student_data['science_grade']}")
         print(f"{CYAN}---------------------------------------------------------------------------")
 
-def get_top_three_students(file_path):
-    student_avg = calculate_student_average(file_path)
-    
-    student_avg.sort(
-        key=lambda student: student['average'],
-        reverse=True
-    )
-    top_three = student_avg[:3]
+def get_top_three_students(students):
+    students = calculate_student_average(students)
+    top_three = students[:3]
     return top_three
 
 def show_top_three_students(top_list):
+    if not show_no_data_message(top_list):
+        return
     print()
     print(f"{CYAN}{BOLD}\tTop 3 Students - Highest Average Grades.!!!\n")
-    for top_students in top_list:
-        print(f"{GREEN}Student Name: {YELLOW}{top_students['full_name']}")
-        print(f"{GREEN}Student Section: {YELLOW}{top_students['section']}")
-        print(f"{GREEN}Student Average: {YELLOW}{top_students['average']}\n")
+    for top_student in top_list:
+        print(f"{GREEN}Student Name: {YELLOW}{top_student['full_name']}")
+        print(f"{GREEN}Student Section: {YELLOW}{top_student['section']}")
+        print(f"{GREEN}Student Average: {YELLOW}{top_student['average']}\n")
         print(f"{CYAN}---------------------------------------------------------------------------")
 
-def calculate_student_average(file_path):
-    data_students = read_data_students_CSV(file_path)
+def calculate_student_average(data_student):
     student_by_avg =[] 
-    for student in data_students:
+    for student in data_student:
         name = student['full_name']
         section = student['section']
         avg = (
@@ -198,23 +194,34 @@ def calculate_student_average(file_path):
             "section": section,
             "average": avg
         })
-    student_by_avg.sort(
+    student_by_avg = sorted(
+        student_by_avg,
         key=lambda student: student['average'],
         reverse=True
-    )
+        )
     return student_by_avg
 
-def show_students_average(students_list):
-    print()
-    print(f"{CYAN}{BOLD}\t Students Ranked by Average Grade.!!!\n")
-    for students in students_list:
-        print(f"{GREEN}Student Name: {YELLOW}{students['full_name']}")
-        print(f"{GREEN}Student Section: {YELLOW}{students['section']}")
-        print(f"{GREEN}Student Average: {YELLOW}{students['average']}\n")
-        print(f"{CYAN}---------------------------------------------------------------------------")    
+def calculate_group_avg(students_avg):
+    if not students_avg:
+        return 0
+    
+    sum_avg = 0
 
-def get_failing_students(file_path):
-    students = read_data_students_CSV(file_path)
+    for student_avg in students_avg:
+        sum_avg += student_avg['average']
+    group_avg =  sum_avg / len(students_avg)    
+
+    return group_avg    
+def show_group_average(group_avg):
+    if not show_no_data_message(group_avg):
+        return
+    
+    print()
+    print(f"{CYAN}{BOLD}Group Average Grade\n")
+    print(f"{GREEN}Overall Group Average: {YELLOW}{group_avg:.2f}")
+    print()
+
+def get_failing_students(students):
     students_failing = []
     for student in students:
         name = student['full_name']
@@ -239,16 +246,22 @@ def get_failing_students(file_path):
     return students_failing
 
 def show_failing_students(failing_data):
+    if not failing_data:
+        print()
+        print(f"{YELLOW}Congratulations! No students with failing grades")
+        return 
     print()
     print(f"{CYAN}{BOLD}\t Students With Failing Grades.!!!\n")
     for student in failing_data:
         print(f"{GREEN}Student Name: {YELLOW}{student['full_name']}")
         print(f"{GREEN}Student Section: {YELLOW}{student['section']}")
-        print(f"{GREEN}Student Spanish Grade: {YELLOW}{student['spanish_grade']}")
-        print(f"{GREEN}Student English Grade: {YELLOW}{student['english_grade']}")
-        print(f"{GREEN}Student Social Studios Grade: {YELLOW}{student['social_s_grade']}")
-        print(f"{GREEN}Student Science Grade: {YELLOW}{student['science_grade']}")
+        if student['spanish_grade'] < 60:
+            print(f"{GREEN}Student Spanish Grade: {RED}{student['spanish_grade']}")
+        if student['english_grade'] < 60:    
+            print(f"{GREEN}Student English Grade: {RED}{student['english_grade']}")
+        if student['social_s_grade'] < 60:    
+            print(f"{GREEN}Student Social Studios Grade: {RED}{student['social_s_grade']}")
+        if student['science_grade'] < 60:
+            print(f"{GREEN}Student Science Grade: {RED}{student['science_grade']}")
         print(f"{GREEN}Student Status: {RED}{student['status']}\n")
         print(f"{CYAN}---------------------------------------------------------------------------")    
-
-
