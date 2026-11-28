@@ -123,6 +123,7 @@ def remove_student_from_list(students, data_student):
         ):    
             students.remove(student)
             return True        
+        
 def show_no_data_message(students):
     if not students:
         print()
@@ -212,8 +213,9 @@ def calculate_group_avg(students_avg):
     group_avg =  sum_avg / len(students_avg)    
 
     return group_avg    
-def show_group_average(group_avg):
-    if not show_no_data_message(group_avg):
+def show_group_average(group_avg, students):
+    
+    if not show_no_data_message(students):
         return
     
     print()

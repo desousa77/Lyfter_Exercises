@@ -10,7 +10,6 @@ BOLD = "\033[1m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RED = "\033[91m"
-students=[]
 
 def display_title():
     title = "***** STUDENT MANAGEMENT SYSTEM. *****"
@@ -48,7 +47,7 @@ def is_valid_menu_option(option):
         return False
     return True
 
-def execute_menu_option(option):
+def execute_menu_option(option, students):
     if option == 1:   
         while True:
             student_data = get_data_new_student()
@@ -68,7 +67,7 @@ def execute_menu_option(option):
     if option == 4:
         students_avg = calculate_student_average(students)
         group_avg = calculate_group_avg(students_avg)
-        show_group_average(group_avg)
+        show_group_average(group_avg, students)
         return True
     if option == 5:
         failing_students = get_failing_students(students)
